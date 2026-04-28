@@ -6,6 +6,7 @@ import Clckwrks.Agreements.Types (Agreement, AgreementMeta, AgreementRevision, A
 import Data.Data (Data, Typeable)
 import Data.Proxy (Proxy(..))
 -- import Data.SafeCopy               (SafeCopy(..), base, deriveSafeCopy)
+import GHC.Types (Type)
 import GHC.TypeNats (KnownNat, SomeNat, Nat, natVal)
 import Web.Routes                  (PathInfo(..))
 import Web.Routes.PathInfo
@@ -47,7 +48,7 @@ instance PathInfo SomeAgreementsURL where
 -}
 -- derivePathInfo ''AgreementsURL
 -- instance PathInfo (AgreementsURL req res)
-{-  
+{-
  = GetAgree AgreementNatId
  | GetAgree2 AgreementId
 -}
@@ -112,7 +113,7 @@ data AgreementsURL
       deriving (Eq, Ord, Data, Typeable, Read, Show)
 derivePathInfo ''AgreementsURL
 
-data TaggedURL c (url :: *) = TaggedURL url
+data TaggedURL c (url :: Type) = TaggedURL url
 deriving instance (Show url) => Show (TaggedURL c url)
 
 -- withURL :: forall url (con :: url). (KnownURL (con :: url)) => TaggedURL con url
@@ -132,10 +133,10 @@ instance (KnownURL con) => WithURL (con :: (* -> url)) where
 --  withURL = TaggedURL (knownURL (Proxy :: Proxy con))
 -}
 
-class WithURL a where
-  type family RequestData  (a :: k) :: *
-  type family ResponseData (a :: k) :: *
-  type WithURLType a :: *
+class WithURL (a :: k) where
+  type family RequestData a :: Type
+  type family ResponseData a :: Type
+  type WithURLType a :: Type
   withURL :: WithURLType a
 
 instance WithURL (GetLatestAgreementsMeta :: AgreementsAdminApiURL) where
@@ -284,4 +285,3 @@ instance Apply AgreementsAdminApiURL AgreementsAdminApiURL where
 instance Apply (a -> AgreementsAdminApiURL) (a -> AgreementsAdminApiURL)  where
   apply c = \a -> apply (c a)
 -}
-

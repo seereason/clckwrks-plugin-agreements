@@ -1,4 +1,4 @@
-{-# LANGUAGE FlexibleContexts, OverloadedStrings, TypeFamilies, QuasiQuotes #-}
+{-# LANGUAGE FlexibleContexts, OverloadedStrings, TypeFamilies, TypeOperators, QuasiQuotes #-}
 module Clckwrks.Agreements.Page.Template where
 
 import Clckwrks
