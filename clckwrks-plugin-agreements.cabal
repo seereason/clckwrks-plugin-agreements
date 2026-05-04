@@ -122,7 +122,7 @@ executable             agreements-settings
                      , web-routes
   if impl(ghcjs)
     build-depends: ghcjs-dom
-  if impl(ghc9-js)
+  if flag(ghc9-js)
     build-depends: ghcjs-dom-javascript
 
 
@@ -156,5 +156,5 @@ executable             agreements-signup-plugin
                      , web-routes
   if impl(ghcjs)
     build-depends: ghcjs-dom
-  if impl(ghc9-js)
+  if flag(ghc9-js)
     build-depends: ghcjs-dom-javascript
