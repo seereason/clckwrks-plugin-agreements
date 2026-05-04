@@ -13,6 +13,16 @@ category:            Clckwrks
 build-type:          Simple
 tested-with:         GHC == 8.0.2, GHC == 8.2.2, GHC == 8.4.1, GHC == 8.6.3, GHC == 8.8.3, GHC == 8.10.2
 
+flag ghc9
+  description: Native ghc 9.xx, where the version supports the js backend. This flag is set in the cabalProjectLocal of the calling flake.
+  default: False
+  manual: True
+
+flag ghc9-js
+  description: ghc 9.xx, JS backend.  This flag is set in the cabalProjectLocal of the calling flake.
+  default: False
+  manual: True
+
 source-repository head
     type:     git
     location: git://github.com/clckwrks/clckwrks-plugin-agreements.git
