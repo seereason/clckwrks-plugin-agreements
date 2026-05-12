@@ -192,7 +192,7 @@ remote method (TaggedURL apiUrl) mReq callback =
 postAgreedRecord :: [(AgreementId, RevisionId)] -> IO ()
 postAgreedRecord ars =
   do debugStrLn "postAgreedRecord"
-     remote POST (withURL @RecordAgreed) (Just ars) $ \() ->
+     remote @RecordAgreed POST (TaggedURL RecordAgreed) (Just ars) $ \() ->
        do debugStrLn "AgreedRecord sent."
 
 agreementsSignupPlugin' :: (AgreementsURL -> Text) -> SignupPlugin
