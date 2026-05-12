@@ -68,14 +68,14 @@ library
                  , unordered-containers
                  , vector
                  , web-plugins
-  if impl(ghcjs) || flag(ghc9-js)
+  if impl(ghcjs) || arch(javascript)
    build-depends: chili,
                   ghcjs-base,
                   happstack-authenticate >= 3.0,
                   http-types
 
   hs-source-dirs: src
-  if !impl(ghcjs) && !flag(ghc9-js)
+  if !impl(ghcjs) && !arch(javascript)
       exposed-modules:
               Clckwrks.Agreements.API
               Clckwrks.Agreements.Acid
@@ -84,7 +84,7 @@ library
               Clckwrks.Agreements.Page.ViewAgreement
               Clckwrks.Agreements.Plugin
               Clckwrks.Agreements.Route
-  if impl(ghcjs) || flag(ghc9-js)
+  if impl(ghcjs) || arch(javascript)
       exposed-modules:
               Clckwrks.Agreements.SignupPlugin
   exposed-modules:
@@ -94,7 +94,7 @@ library
 
 executable             agreements-settings
   import:              shared-ghcjs-properties
-  if impl(ghcjs) || flag(ghc9-js)
+  if impl(ghcjs) || arch(javascript)
     buildable: True
   else
     buildable: False
@@ -122,13 +122,13 @@ executable             agreements-settings
                      , web-routes
   if impl(ghcjs)
     build-depends: ghcjs-dom
-  if flag(ghc9-js)
+  if arch(javascript)
     build-depends: ghcjs-dom-javascript
 
 
 executable             agreements-signup-plugin
   import:              shared-ghcjs-properties
-  if impl(ghcjs) || flag(ghc9-js)
+  if impl(ghcjs) || arch(javascript)
     buildable: False
   else
     buildable: False
@@ -156,5 +156,5 @@ executable             agreements-signup-plugin
                      , web-routes
   if impl(ghcjs)
     build-depends: ghcjs-dom
-  if flag(ghc9-js)
+  if arch(javascript)
     build-depends: ghcjs-dom-javascript
