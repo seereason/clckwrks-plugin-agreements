@@ -13,13 +13,8 @@ category:            Clckwrks
 build-type:          Simple
 tested-with:         GHC == 8.0.2, GHC == 8.2.2, GHC == 8.4.1, GHC == 8.6.3, GHC == 8.8.3, GHC == 8.10.2
 
-flag ghc9
-  description: Native ghc 9.xx, where the version supports the js backend. This flag is set in the cabalProjectLocal of the calling flake.
-  default: False
-  manual: True
-
-flag ghc9-js
-  description: ghc 9.xx, JS backend.  This flag is set in the cabalProjectLocal of the calling flake.
+flag arch_javascript
+  description: Stand-in for arch(javascript). Remove if not using haskell.nix.
   default: False
   manual: True
 
@@ -51,7 +46,8 @@ library
                , web-routes
                , web-routes-th
 
-  if !impl(ghcjs) && !flag(ghc9-js)
+  -- flag(arch_javascript): stand-in for arch(javascript); remove if not using haskell.nix.
+  if !impl(ghcjs) && !flag(arch_javascript)
     build-depends: acid-state
                  , clckwrks >= 0.28.1
                  , filepath
@@ -108,7 +104,6 @@ executable             agreements-settings
                      , clckwrks-plugin-agreements
                      , containers
                      , http-types
-                     , ghcjs-base
                      , lens
                      , mtl
                      , safecopy
@@ -121,9 +116,9 @@ executable             agreements-settings
                      , template-haskell
                      , web-routes
   if impl(ghcjs)
-    build-depends: ghcjs-dom
+    build-depends: ghcjs-base, ghcjs-dom
   if arch(javascript)
-    build-depends: ghcjs-dom-javascript
+    build-depends: ghcjs-base >= 0.8.0.2, ghcjs-dom-javascript >= 0.9.9.3
 
 
 executable             agreements-signup-plugin
@@ -142,7 +137,6 @@ executable             agreements-signup-plugin
                      , containers
                      , happstack-authenticate >= 3.0
                      , http-types
-                     , ghcjs-base
                      , lens
                      , mtl
                      , safecopy
@@ -155,6 +149,6 @@ executable             agreements-signup-plugin
                      , template-haskell
                      , web-routes
   if impl(ghcjs)
-    build-depends: ghcjs-dom
+    build-depends: ghcjs-base, ghcjs-dom
   if arch(javascript)
-    build-depends: ghcjs-dom-javascript
+    build-depends: ghcjs-base >= 0.8.0.2, ghcjs-dom-javascript >= 0.9.9.3
