@@ -71,7 +71,7 @@ library
                   http-types
 
   hs-source-dirs: src
-  if !impl(ghcjs) && !arch(javascript)
+  if !(impl(ghcjs) || arch(javascript))
       exposed-modules:
               Clckwrks.Agreements.API
               Clckwrks.Agreements.Acid

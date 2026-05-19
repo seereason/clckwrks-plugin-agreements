@@ -18,7 +18,7 @@ import Control.Arrow        (Arrow(arr,first, second, (&&&), (***)), ArrowChoice
 import Control.Category     (Category(id,(.)))
 import Control.Monad        ((<=<), when)
 import Clckwrks.Agreements.Types as Type (Agreement(..), AgreementId(..), AgreementMeta(..), AgreementRevision, AgreementsSettings(..), NewAgreementData(..), RevisionId(..), UpdateAgreementData(..), agreementId, agreementName, revisionNote, revisionBody)
-import Clckwrks.Agreements.URL as URL (AgreementsURL(..), AgreementsAdminURL(..), AgreementsAdminApiURL(..), KnownURL(..), RequestData(..), ResponseData(..), TaggedURL(..), withURL)
+import Clckwrks.Agreements.URL as URL (AgreementsURL(..), AgreementsAdminURL(..), AgreementsAdminApiURL(..), KnownURL(..), RequestData(..), ResponseData(..), TaggedURL(..), withURL, WithURL)
 import Control.Lens ((&), (^.), (.~))
 import Control.Monad.Trans (MonadIO(liftIO))
 import Control.Concurrent (threadDelay)
@@ -295,7 +295,7 @@ viewAgreement modelTV rootNode aid mrid =
 
             replaceChild p newNode rootNode
 
-            remote modelTV GET (withURL @GetAgreement aid) Nothing $ \agreement ->
+            remote @GetAgreement modelTV GET (TaggedURL (GetAgreement aid)) Nothing $ \agreement ->
               do debugPrint agreement
                  update agreement
 
@@ -333,7 +333,7 @@ agreementList modelTV rootNode =
          do (newNode, update) <- agreementListTemplate d
             replaceChild p newNode rootNode
 
-            remote modelTV GET (withURL @GetLatestAgreementsMeta) Nothing $ \latestMeta ->
+            remote @GetLatestAgreementsMeta modelTV GET (TaggedURL GetLatestAgreementsMeta) Nothing $ \latestMeta ->
               do print latestMeta
                  m' <- atomically $
                         do m0 <- readTVar modelTV
@@ -692,7 +692,7 @@ newAgreement modelTV rootNode =
          debugStrLn $ "mVal = " ++ show mVal
          case mVal of
            (Just name, Just note, Just body) ->
-             do remote modelTV POST (withURL @CreateAgreement) (Just (NewAgreementData name note (Map.singleton "en_US" body))) handleResponse
+             do remote @CreateAgreement modelTV POST (TaggedURL CreateAgreement) (Just (NewAgreementData name note (Map.singleton "en_US" body))) handleResponse
            _ -> pure ()
 
 
@@ -793,5 +793,5 @@ updateAgreement modelTV agr rootNode =
          debugStrLn $ "mVal = " ++ show mVal
          case mVal of
            (Just note, Just body) ->
-             do remote modelTV POST (withURL @UpdateAgreement) (Just (UpdateAgreementData (agr ^. agreementId) note (Map.singleton "en_US" body))) handleResponse
+             do remote @UpdateAgreement modelTV POST (TaggedURL UpdateAgreement) (Just (UpdateAgreementData (agr ^. agreementId) note (Map.singleton "en_US" body))) handleResponse
            _ -> pure ()
