@@ -61,6 +61,12 @@ import System.IO (hFlush, stdout, hGetBuffering, hSetBuffering, BufferMode(..))
 import Text.Read (readMaybe)
 import Web.Routes
 
+#if defined(wasm32_HOST_ARCH)
+-- The wasm build is a reactor module; the loader starts it by calling
+-- hs_start.
+foreign export javascript "hs_start" main :: IO ()
+#endif
+
 
 -- * Debug stuff
 
