@@ -1,3 +1,4 @@
+{-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE OverloadedStrings, QuasiQuotes #-}
 module Clckwrks.Agreements.Route where
 
@@ -16,10 +17,25 @@ import Happstack.Server             ( Response, Happstack, Method(GET), escape, 
                                     , ok, internalServerError, serveFile, asContentType
                                     )
 import HSP.XMLGenerator
+import Control.Monad                (MonadPlus)
+import Control.Monad.IO.Class       (MonadIO)
+import Happstack.Server             (ServerMonad(askRq), FilterMonad, rqInputsQuery)
+import System.FilePath              (takeDirectory, (</>))
 import HSP.XML                   (fromStringLit)
 import Language.Haskell.HSX.QQ      (hsx)
 import Web.Plugins.Core             (getPluginRouteFn, getPluginState)
 
+
+-- | Serve a client script, or -- when the URL has a @wasm@ query
+-- parameter, as the wasm build's all.js uses to fetch its program -- the
+-- @all.wasm@ next to it.
+serveClientScript :: (ServerMonad m, FilterMonad Response m, MonadIO m, MonadPlus m)
+                  => String -> FilePath -> m Response
+serveClientScript contentType p =
+  do rq <- askRq
+     case lookup "wasm" (rqInputsQuery rq) of
+       Just _  -> serveFile (asContentType "application/wasm") (takeDirectory p </> "all.wasm")
+       Nothing -> serveFile (asContentType contentType) p
 
 routeAgreements :: AgreementsURL
                -> AgreementsM Response
@@ -34,7 +50,7 @@ routeAgreements url' =
             case _agreementsSettingsPath (_agreementsPagePaths mps) of
               Nothing -> internalServerError $ toResponse ("path to agreements-settings not configure." :: String)
               (Just p) -> do -- liftIO $ putStrLn $ "agreements-settings path is = "++ p
-                             serveFile (asContentType "text/javascript;charset=UTF-8") p
+                             serveClientScript "text/javascript;charset=UTF-8" p
 
        AgreementsRequired ->
          do getRequiredAgreements
